@@ -111,7 +111,14 @@ int main()
     }
 
     buffer[ret] = '\0';
-    printf("File list:\n%s\n", buffer);
+
+    printf("Files available for download:\n");
+    char *line = strtok(buffer, "\n");
+    while (line != NULL)
+    {
+        printf("%s\n", line);
+        line = strtok(NULL, "\n");
+    }
 
     close(sock);
     return 0;
