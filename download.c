@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 
 #define PORT 3456
+#define BUFFER 1024
 
 int main()
 {
@@ -11,6 +12,7 @@ int main()
     struct sockaddr_in server_addr;
     char buffer[1024] = {0};
     char hostname[256];
+    char filename[256];
     int choice;
     int ret;
 
@@ -70,17 +72,6 @@ int main()
         printf("Error.  \n");
         return 1;
     }
-
-    buffer[ret] = '\0';
-    printf("Server: %s\n", buffer);
-
-    ret = read(sock, buffer, sizeof(buffer) - 1);
-    if (ret < 0)
-    {
-        printf("Error reading server response.\n");
-        return 1;
-    }
-
     buffer[ret] = '\0';
     printf("Server: %s\n", buffer);
 
@@ -109,6 +100,24 @@ int main()
     {
         printf("%s\n", line);
         line = strtok(NULL, "\n");
+    }
+
+    printf("Enter the filename to retrieve: ");
+    scanf("%s", filename);
+
+    sprintf(buffer, "GET %s\n", filename);
+    write(sock, buffer, strlen(buffer));
+
+    printf("File content: \n");
+    while ((ret = read(sock, buffer, sizeof(buffer) - 1)) > 0)
+    {
+        buffer[ret] = '\0';
+        printf("%s", buffer);
+    }
+
+    if (ret < 0)
+    {
+        printf("Error receiving file.\n");
     }
 
     close(sock);
