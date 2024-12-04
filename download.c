@@ -93,6 +93,26 @@ int main()
     buffer[ret] = '\0';
     printf("Server: %s\n", buffer);
 
+    printf("Sending LIST command.\n");
+    const char *list_command = "LIST\n";
+    ret = send(sock, list_command, strlen(list_command), 0);
+    if (ret < 0)
+    {
+        printf("Error sending LIST.\n");
+        return 1;
+    }
+
+    printf("Receiving file list.\n");
+    ret = read(sock, buffer, sizeof(buffer) - 1);
+    if (ret < 0)
+    {
+        printf("Error reading file list.\n");
+        return 1;
+    }
+
+    buffer[ret] = '\0';
+    printf("File list:\n%s\n", buffer);
+
     close(sock);
     return 0;
 }
