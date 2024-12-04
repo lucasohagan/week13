@@ -13,6 +13,7 @@ int main()
     char buffer[1024] = {0};
     char hostname[256];
     char filename[256];
+    FILE *file;
     int choice;
     int ret;
 
@@ -102,24 +103,34 @@ int main()
         line = strtok(NULL, "\n");
     }
 
-    printf("Enter the filename to retrieve: ");
+    printf("Enter the filename to retrieve:");
     scanf("%s", filename);
 
     sprintf(buffer, "GET %s\n", filename);
     write(sock, buffer, strlen(buffer));
 
-    printf("File content: \n");
+    file = fopen(filename, "wb");
+    if (file == NULL)
+    {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    printf("Saving file.\n");
     while ((ret = read(sock, buffer, sizeof(buffer) - 1)) > 0)
     {
-        buffer[ret] = '\0';
-        printf("%s", buffer);
+        fwrite(buffer, 1, ret, file);
     }
 
     if (ret < 0)
     {
-        printf("Error receiving file.\n");
+        printf("Error receiving contents of file.\n");
     }
 
+    fclose(file);
     close(sock);
+
+    printf("File has been downloaded.\n");
+
     return 0;
 }
