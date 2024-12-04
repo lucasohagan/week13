@@ -74,6 +74,25 @@ int main()
     buffer[ret] = '\0';
     printf("Server: %s\n", buffer);
 
+    printf("Sending HELO server.\n");
+    const char *helo_command = "HELO\n";
+    ret = send(sock, helo_command, strlen(helo_command), 0);
+    if (ret < 0)
+    {
+        printf("Error sending HELO.\n");
+        return 1;
+    }
+
+    ret = read(sock, buffer, sizeof(buffer) - 1);
+    if (ret < 0)
+    {
+        printf("Error reading server response.\n");
+        return 1;
+    }
+
+    buffer[ret] = '\0';
+    printf("Server: %s\n", buffer);
+
     close(sock);
     return 0;
 }
